@@ -116,6 +116,17 @@ describe('useUserFileStore', () => {
     })
 
     describe('save', () => {
+      it('should not save unmodified file', async () => {
+        const file = new UserFile('file1.txt', 123, 100)
+        file.content = 'content'
+        file.originalContent = 'content'
+
+        console.warn('SHOULD NOT SAVE.')
+        await file.save()
+
+        expect(api.storeUserData).not.toHaveBeenCalled()
+      })
+
       it('should save modified file', async () => {
         const file = new UserFile('file1.txt', 123, 100)
         file.content = 'modified content'
@@ -134,16 +145,6 @@ describe('useUserFileStore', () => {
         )
         expect(file.lastModified).toBe(456)
         expect(file.size).toBe(200)
-      })
-
-      it('should not save unmodified file', async () => {
-        const file = new UserFile('file1.txt', 123, 100)
-        file.content = 'content'
-        file.originalContent = 'content'
-
-        await file.save()
-
-        expect(api.storeUserData).not.toHaveBeenCalled()
       })
     })
 
