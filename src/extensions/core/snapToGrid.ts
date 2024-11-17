@@ -86,6 +86,7 @@ app.registerExtension({
       if (
         shouldSnapToGrid() &&
         this.selectedItems.has(node) &&
+        this.isDragging &&
         node.id in this.selected_nodes
       ) {
         const [x, y] = roundVectorToGrid([...node.pos])
