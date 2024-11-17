@@ -161,12 +161,6 @@ export default defineConfig({
     minifyWhitespace: SHOULD_MINIFY
   },
 
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./vitest.setup.ts'],
-  },
-
   define: {
     '__COMFYUI_FRONTEND_VERSION__': JSON.stringify(process.env.npm_package_version)
   },
