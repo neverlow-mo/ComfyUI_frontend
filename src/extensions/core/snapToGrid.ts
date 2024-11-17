@@ -85,7 +85,7 @@ app.registerExtension({
     LGraphCanvas.prototype.drawNode = function (node, ctx) {
       if (
         shouldSnapToGrid() &&
-        this.node_dragged &&
+        this.selectedItems.has(node) &&
         node.id in this.selected_nodes
       ) {
         const [x, y] = roundVectorToGrid([...node.pos])
