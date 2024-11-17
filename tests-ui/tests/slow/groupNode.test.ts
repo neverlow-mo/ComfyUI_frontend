@@ -1,4 +1,5 @@
 // @ts-strict-ignore
+import { vi } from 'vitest'
 import {
   start,
   createDefaultWorkflow,
@@ -35,7 +36,7 @@ describe('group node', () => {
       Object.keys(app.canvas.selected_nodes).sort((a, b) => +a - +b)
     ).toEqual(nodes.map((n) => n.id + '').sort((a, b) => +a - +b))
 
-    global.prompt = jest.fn().mockImplementation(() => name)
+    global.prompt = vi.fn().mockImplementation(() => name)
     const groupNode = await nodes[0].menu['Convert to Group Node'].call(false)
 
     // Check group name was requested
@@ -761,7 +762,7 @@ describe('group node', () => {
   test.skip('shows missing node error on missing internal node when loading graph data', async () => {
     const { graph } = await start()
 
-    const dialogShow = jest.spyOn(graph.app.ui.dialog, 'show')
+    const dialogShow = vi.spyOn(graph.app.ui.dialog, 'show')
     await graph.app.loadGraphData({
       last_node_id: 3,
       last_link_id: 1,

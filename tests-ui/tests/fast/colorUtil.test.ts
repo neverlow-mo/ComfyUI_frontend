@@ -1,5 +1,6 @@
 // @ts-strict-ignore
 import { adjustColor } from '@/utils/colorUtil'
+import { vi } from 'vitest'
 
 interface ColorTestCase {
   hex: string
@@ -14,7 +15,7 @@ interface ColorTestCase {
 
 type ColorFormat = 'hex' | 'rgb' | 'rgba' | 'hsl' | 'hsla'
 
-jest.mock('lodash', () => ({
+vi.mock('lodash', () => ({
   memoize: (fn: any) => fn
 }))
 

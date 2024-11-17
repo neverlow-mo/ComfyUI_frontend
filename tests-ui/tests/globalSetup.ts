@@ -1,3 +1,5 @@
+import { vi } from 'vitest'
+
 // @ts-strict-ignore
 module.exports = async function () {
   global.ResizeObserver = class ResizeObserver {
@@ -13,81 +15,89 @@ module.exports = async function () {
 
   localStorage['Comfy.Settings.Comfy.Logging.Enabled'] = 'false'
 
-  jest.mock('@/services/dialogService', () => {
+  vi.mock('@/services/dialogService', () => {
     return {
-      showLoadWorkflowWarning: jest.fn(),
-      showMissingModelsWarning: jest.fn(),
-      showSettingsDialog: jest.fn(),
-      showExecutionErrorDialog: jest.fn(),
-      showTemplateWorkflowsDialog: jest.fn(),
-      showPromptDialog: jest
-        .fn()
-        .mockImplementation((message, defaultValue) => {
-          return Promise.resolve(defaultValue)
-        })
+      showLoadWorkflowWarning: vi.fn(),
+      showMissingModelsWarning: vi.fn(),
+      showSettingsDialog: vi.fn(),
+      showExecutionErrorDialog: vi.fn(),
+      showTemplateWorkflowsDialog: vi.fn(),
+      showPromptDialog: vi.fn().mockImplementation((message, defaultValue) => {
+        return Promise.resolve(defaultValue)
+      })
     }
   })
 
-  jest.mock('@/stores/toastStore', () => {
+  vi.mock('@/stores/toastStore', () => {
     return {
       useToastStore: () => ({
-        addAlert: jest.fn()
+        addAlert: vi.fn()
       })
     }
   })
 
-  jest.mock('@/stores/extensionStore', () => {
+  vi.mock('@/stores/extensionStore', () => {
     return {
       useExtensionStore: () => ({
-        registerExtension: jest.fn(),
-        loadDisabledExtensionNames: jest.fn()
+        registerExtension: vi.fn(),
+        loadDisabledExtensionNames: vi.fn()
       })
     }
   })
 
-  jest.mock('@/stores/workspaceStore', () => {
+  vi.mock('@/stores/workspaceStore', () => {
     return {
       useWorkspaceStore: () => ({
         shiftDown: false,
         spinner: false,
         focusMode: false,
-        toggleFocusMode: jest.fn(),
+        toggleFocusMode: vi.fn(),
         workflow: {
           activeWorkflow: null,
-          syncWorkflows: jest.fn(),
-          getWorkflowByPath: jest.fn(),
-          createTemporary: jest.fn(),
-          openWorkflow: jest.fn()
+          syncWorkflows: vi.fn(),
+          getWorkflowByPath: vi.fn(),
+          createTemporary: vi.fn(),
+          openWorkflow: vi.fn()
         }
       })
     }
   })
 
-  jest.mock('@/stores/workspace/bottomPanelStore', () => {
+  vi.mock('@/stores/workspace/bottomPanelStore', () => {
     return {
-      toggleBottomPanel: jest.fn()
+      toggleBottomPanel: vi.fn()
     }
   })
 
-  jest.mock('@/stores/widgetStore', () => {
+  vi.mock('@/stores/widgetStore', () => {
     const widgets = {}
     return {
       useWidgetStore: () => ({
         widgets,
-        registerCustomWidgets: jest.fn()
+        registerCustomWidgets: vi.fn()
       })
     }
   })
 
-  jest.mock('vue-i18n', () => {
+  vi.mock('@/stores/widgetStore', () => {
+    const widgets = {}
     return {
-      useI18n: jest.fn()
+      useWidgetStore: () => ({
+        widgets,
+        registerCustomWidgets: vi.fn()
+      })
     }
   })
 
-  jest.mock('jsondiffpatch', () => {
+  vi.mock('vue-i18n', () => {
     return {
-      diff: jest.fn()
+      useI18n: vi.fn()
+    }
+  })
+
+  vi.mock('jsondiffpatch', () => {
+    return {
+      diff: vi.fn()
     }
   })
 }

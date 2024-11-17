@@ -1,4 +1,5 @@
 // @ts-strict-ignore
+import { vi } from 'vitest'
 import {
   start,
   makeNodeDef,
@@ -185,7 +186,7 @@ describe('widget inputs', () => {
   test.skip('shows missing node error on custom node with converted input', async () => {
     const { graph } = await start()
 
-    const dialogShow = jest.spyOn(graph.app.ui.dialog, 'show')
+    const dialogShow = vi.spyOn(graph.app.ui.dialog, 'show')
 
     await graph.app.loadGraphData({
       last_node_id: 3,

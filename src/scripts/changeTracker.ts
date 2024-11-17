@@ -24,7 +24,7 @@ function clone(obj: any) {
 
 const logger = log.getLogger('ChangeTracker')
 // Change to debug for more verbose logging
-logger.setLevel('info')
+logger.setLevel('debug')
 
 export class ChangeTracker {
   static MAX_HISTORY = 50

@@ -1,4 +1,5 @@
 // @ts-strict-ignore
+import { vi } from 'vitest'
 import { start } from '../../utils'
 import lg from '../../utils/litegraph'
 
@@ -22,7 +23,7 @@ describe('users', () => {
   describe('multi-user', () => {
     async function mockAddStylesheet() {
       const utils = await import('../../../src/scripts/utils')
-      utils.addStylesheet = jest.fn().mockReturnValue(Promise.resolve())
+      utils.addStylesheet = vi.fn().mockReturnValue(Promise.resolve())
     }
 
     async function waitForUserScreenShow() {
@@ -36,14 +37,14 @@ describe('users', () => {
         resolve = res
         reject = rej
       })
-      jest
-        .spyOn(UserSelectionScreen.prototype, 'show')
-        .mockImplementation(async (...args) => {
+      vi.spyOn(UserSelectionScreen.prototype, 'show').mockImplementation(
+        async (...args) => {
           const res = fn(...args)
           await new Promise(process.nextTick) // wait for promises to resolve
           resolve()
           return res
-        })
+        }
+      )
       setTimeout(
         () => reject('timeout waiting for UserSelectionScreen to be shown.'),
         500

@@ -6,13 +6,14 @@ import {
 } from '@/stores/workflowStore'
 import { api } from '@/scripts/api'
 import { defaultGraph, defaultGraphJSON } from '@/scripts/defaultGraph'
+import { vi, type Mock } from 'vitest'
 
 // Add mock for api at the top of the file
-jest.mock('@/scripts/api', () => ({
+vi.mock('@/scripts/api', () => ({
   api: {
-    getUserData: jest.fn(),
-    storeUserData: jest.fn(),
-    listUserDataFullInfo: jest.fn()
+    getUserData: vi.fn(),
+    storeUserData: vi.fn(),
+    listUserDataFullInfo: vi.fn()
   }
 }))
 
@@ -21,7 +22,7 @@ describe('useWorkflowStore', () => {
   let bookmarkStore: ReturnType<typeof useWorkflowBookmarkStore>
 
   const syncRemoteWorkflows = async (filenames: string[]) => {
-    ;(api.listUserDataFullInfo as jest.Mock).mockResolvedValue(
+    ;(api.listUserDataFullInfo as Mock).mockResolvedValue(
       filenames.map((filename) => ({
         path: filename,
         modified: new Date().toISOString(),
@@ -35,14 +36,14 @@ describe('useWorkflowStore', () => {
     setActivePinia(createPinia())
     store = useWorkflowStore()
     bookmarkStore = useWorkflowBookmarkStore()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 
     // Add default mock implementations
-    ;(api.getUserData as jest.Mock).mockResolvedValue({
+    ;(api.getUserData as Mock).mockResolvedValue({
       status: 200,
       json: () => Promise.resolve({ favorites: [] })
     })
-    ;(api.storeUserData as jest.Mock).mockResolvedValue({
+    ;(api.storeUserData as Mock).mockResolvedValue({
       status: 200
     })
   })
@@ -84,7 +85,7 @@ describe('useWorkflowStore', () => {
       const mockWorkflowData = { nodes: [], links: [] }
 
       // Mock the load response
-      jest.spyOn(workflow, 'load').mockImplementation(async () => {
+      vi.spyOn(workflow, 'load').mockImplementation(async () => {
         workflow.changeTracker = { activeState: mockWorkflowData } as any
         return workflow as LoadedComfyWorkflow
       })
@@ -101,7 +102,7 @@ describe('useWorkflowStore', () => {
 
     it('should not reload an already active workflow', async () => {
       const workflow = await store.createTemporary('test.json').load()
-      jest.spyOn(workflow, 'load')
+      vi.spyOn(workflow, 'load')
 
       // Set as active workflow
       store.activeWorkflow = workflow
@@ -119,7 +120,7 @@ describe('useWorkflowStore', () => {
       expect(workflow.path).toBe('workflows/a.json')
       expect(workflow.isLoaded).toBe(false)
       expect(workflow.isTemporary).toBe(false)
-      ;(api.getUserData as jest.Mock).mockResolvedValue({
+      ;(api.getUserData as Mock).mockResolvedValue({
         status: 200,
         text: () => Promise.resolve(defaultGraphJSON)
       })
@@ -140,7 +141,7 @@ describe('useWorkflowStore', () => {
       expect(workflow).not.toBeNull()
       expect(workflow.path).toBe('workflows/a.json')
       expect(workflow.isLoaded).toBe(false)
-      ;(api.getUserData as jest.Mock).mockResolvedValue({
+      ;(api.getUserData as Mock).mockResolvedValue({
         status: 200,
         text: () => Promise.resolve(defaultGraphJSON)
       })
@@ -170,12 +171,12 @@ describe('useWorkflowStore', () => {
       expect(bookmarkStore.isBookmarked(workflow.path)).toBe(true)
 
       // Mock super.rename
-      jest
-        .spyOn(Object.getPrototypeOf(workflow), 'rename')
-        .mockImplementation(async function (this: any, newPath: string) {
+      vi.spyOn(Object.getPrototypeOf(workflow), 'rename').mockImplementation(
+        async function (this: any, newPath: string) {
           this.path = newPath
           return this
-        } as any)
+        } as any
+      )
 
       // Perform rename
       const newPath = 'workflows/dir/renamed.json'
@@ -193,12 +194,12 @@ describe('useWorkflowStore', () => {
       expect(bookmarkStore.isBookmarked(workflow.path)).toBe(false)
 
       // Mock super.rename
-      jest
-        .spyOn(Object.getPrototypeOf(workflow), 'rename')
-        .mockImplementation(async function (this: any, newPath: string) {
+      vi.spyOn(Object.getPrototypeOf(workflow), 'rename').mockImplementation(
+        async function (this: any, newPath: string) {
           this.path = newPath
           return this
-        } as any)
+        } as any
+      )
 
       // Perform rename
       const newName = 'renamed'
@@ -227,7 +228,7 @@ describe('useWorkflowStore', () => {
       const workflow = store.createTemporary('test.json')
 
       // Mock the necessary methods
-      jest.spyOn(workflow, 'delete').mockResolvedValue()
+      vi.spyOn(workflow, 'delete').mockResolvedValue()
 
       // Open the workflow first
       await store.openWorkflow(workflow)
@@ -243,7 +244,7 @@ describe('useWorkflowStore', () => {
       const workflow = store.createTemporary('test.json')
 
       // Mock delete method
-      jest.spyOn(workflow, 'delete').mockResolvedValue()
+      vi.spyOn(workflow, 'delete').mockResolvedValue()
 
       // Bookmark the workflow
       bookmarkStore.setBookmarked(workflow.path, true)
@@ -266,9 +267,9 @@ describe('useWorkflowStore', () => {
       const mockState = { nodes: [] }
       workflow.changeTracker = {
         activeState: mockState,
-        reset: jest.fn()
+        reset: vi.fn()
       } as any
-      ;(api.storeUserData as jest.Mock).mockResolvedValue({
+      ;(api.storeUserData as Mock).mockResolvedValue({
         status: 200,
         json: () =>
           Promise.resolve({
@@ -296,9 +297,9 @@ describe('useWorkflowStore', () => {
       const mockState = { nodes: [] }
       workflow.changeTracker = {
         activeState: mockState,
-        reset: jest.fn()
+        reset: vi.fn()
       } as any
-      ;(api.storeUserData as jest.Mock).mockResolvedValue({
+      ;(api.storeUserData as Mock).mockResolvedValue({
         status: 200,
         json: () =>
           Promise.resolve({
@@ -330,9 +331,9 @@ describe('useWorkflowStore', () => {
       const mockState = { nodes: [] }
       workflow.changeTracker = {
         activeState: mockState,
-        reset: jest.fn()
+        reset: vi.fn()
       } as any
-      ;(api.storeUserData as jest.Mock).mockResolvedValue({
+      ;(api.storeUserData as Mock).mockResolvedValue({
         status: 200,
         json: () =>
           Promise.resolve({

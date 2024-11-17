@@ -3,6 +3,7 @@ import type { ComfySettingsDialog } from '@/scripts/ui/settings'
 import type { ComfyApp } from '@/scripts/app'
 import '../../src/scripts/api'
 import { ComfyNodeDef } from '@/types/apiTypes'
+import { vi } from 'vitest'
 
 const fs = require('fs')
 const path = require('path')
@@ -64,38 +65,38 @@ export function mockApi(config: APIConfig = {}) {
     addEventListener: events.addEventListener.bind(events),
     removeEventListener: events.removeEventListener.bind(events),
     dispatchEvent: events.dispatchEvent.bind(events),
-    getSystemStats: jest.fn(),
-    getExtensions: jest.fn(() => mockExtensions),
-    getNodeDefs: jest.fn(() => mockNodeDefs),
-    init: jest.fn(),
-    apiURL: jest.fn((x) => 'src/' + x),
-    fileURL: jest.fn((x) => 'src/' + x),
-    createUser: jest.fn((username) => {
+    getSystemStats: vi.fn(),
+    getExtensions: vi.fn(() => mockExtensions),
+    getNodeDefs: vi.fn(() => mockNodeDefs),
+    init: vi.fn(),
+    apiURL: vi.fn((x) => 'src/' + x),
+    fileURL: vi.fn((x) => 'src/' + x),
+    createUser: vi.fn((username) => {
       if (username in userConfig.users) {
         return { status: 400, json: () => 'Duplicate' }
       }
       userConfig.users[username + '!'] = username
       return { status: 200, json: () => username + '!' }
     }),
-    getModels: jest.fn(() => []),
-    getUserConfig: jest.fn(
+    getModels: vi.fn(() => []),
+    getUserConfig: vi.fn(
       () => userConfig ?? { storage: 'browser', migrated: false }
     ),
-    getSettings: jest.fn(() => settings),
-    storeSettings: jest.fn((v) => Object.assign(settings, v)),
-    getUserData: jest.fn((f) => {
+    getSettings: vi.fn(() => settings),
+    storeSettings: vi.fn((v) => Object.assign(settings, v)),
+    getUserData: vi.fn((f) => {
       if (f in userData) {
         return { status: 200, json: () => userData[f] }
       } else {
         return { status: 404 }
       }
     }),
-    storeUserData: jest.fn((file, data) => {
+    storeUserData: vi.fn((file, data) => {
       userData[file] = data
     }),
-    listUserData: jest.fn(() => [])
+    listUserData: vi.fn(() => [])
   }
-  jest.mock('../../src/scripts/api', () => ({
+  vi.mock('../../src/scripts/api', () => ({
     get api() {
       return mockApi
     }
@@ -122,20 +123,20 @@ export const mockSettingStore = () => {
     }
   }
 
-  jest.mock('@/stores/settingStore', () => ({
-    useSettingStore: jest.fn(() => mockedSettingStore)
+  vi.mock('@/stores/settingStore', () => ({
+    useSettingStore: vi.fn(() => mockedSettingStore)
   }))
 }
 
 export const mockNodeDefStore = () => {
   const mockedNodeDefStore = {
-    addNodeDef: jest.fn((nodeDef: ComfyNodeDef) => {})
+    addNodeDef: vi.fn((nodeDef: ComfyNodeDef) => {})
   }
 
-  jest.mock('@/stores/nodeDefStore', () => ({
-    useNodeDefStore: jest.fn(() => mockedNodeDefStore),
-    useNodeFrequencyStore: jest.fn(() => ({
-      getNodeFrequencyByName: jest.fn(() => 0)
+  vi.mock('@/stores/nodeDefStore', () => ({
+    useNodeDefStore: vi.fn(() => mockedNodeDefStore),
+    useNodeFrequencyStore: vi.fn(() => ({
+      getNodeFrequencyByName: vi.fn(() => 0)
     }))
   }))
 }

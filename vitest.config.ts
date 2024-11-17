@@ -5,8 +5,8 @@ export default defineConfig({
   plugins: [vue()],
   test: {
     globals: true,
-    environment: 'happy-dom',
-    setupFiles: ['./vitest.setup.ts'],
+    environment: 'jsdom',
+    setupFiles: ['./vitest.setup.ts', './tests-ui/tests/globalSetup.ts'],
     include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     coverage: {
       reporter: ['text', 'json', 'html']

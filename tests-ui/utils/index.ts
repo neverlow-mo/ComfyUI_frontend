@@ -4,6 +4,7 @@ import { Ez, EzGraph, EzNameSpace } from './ezgraph'
 import lg from './litegraph'
 import fs from 'fs'
 import path from 'path'
+import { vi } from 'vitest'
 
 const html = fs.readFileSync(path.resolve(__dirname, '../../index.html'))
 
@@ -30,8 +31,8 @@ interface StartResult {
  */
 export async function start(config: StartConfig = {}): Promise<StartResult> {
   if (config.resetEnv) {
-    jest.resetModules()
-    jest.resetAllMocks()
+    vi.resetModules()
+    vi.resetAllMocks()
     lg.setup(global)
     localStorage.clear()
     sessionStorage.clear()

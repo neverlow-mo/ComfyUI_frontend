@@ -163,8 +163,8 @@ export default defineConfig({
 
   test: {
     globals: true,
-    environment: 'happy-dom',
-    setupFiles: ['./vitest.setup.ts']
+    environment: 'jsdom',
+    setupFiles: ['./vitest.setup.ts'],
   },
 
   define: {

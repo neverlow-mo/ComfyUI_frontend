@@ -1,24 +1,25 @@
 import { setActivePinia, createPinia } from 'pinia'
 import { useModelStore } from '@/stores/modelStore'
 import { api } from '@/scripts/api'
+import { vi, Mock } from 'vitest'
 
 // Mock the api
-jest.mock('@/scripts/api', () => ({
+vi.mock('@/scripts/api', () => ({
   api: {
-    getModels: jest.fn(),
-    getModelFolders: jest.fn(),
-    viewMetadata: jest.fn()
+    getModels: vi.fn(),
+    getModelFolders: vi.fn(),
+    viewMetadata: vi.fn()
   }
 }))
 
 function enableMocks() {
-  ;(api.getModels as jest.Mock).mockResolvedValue([
+  ;(api.getModels as Mock).mockResolvedValue([
     'sdxl.safetensors',
     'sdv15.safetensors',
     'noinfo.safetensors'
   ])
-  ;(api.getModelFolders as jest.Mock).mockResolvedValue(['checkpoints', 'vae'])
-  ;(api.viewMetadata as jest.Mock).mockImplementation((_, model) => {
+  ;(api.getModelFolders as Mock).mockResolvedValue(['checkpoints', 'vae'])
+  ;(api.viewMetadata as Mock).mockImplementation((_, model) => {
     if (model === 'noinfo.safetensors') {
       return Promise.resolve({})
     }

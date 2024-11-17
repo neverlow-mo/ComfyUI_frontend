@@ -1,15 +1,16 @@
 import { setActivePinia, createPinia } from 'pinia'
 import { UserFile, useUserFileStore } from '@/stores/userFileStore'
 import { api } from '@/scripts/api'
+import { vi, type Mock } from 'vitest'
 
 // Mock the api
-jest.mock('@/scripts/api', () => ({
+vi.mock('@/scripts/api', () => ({
   api: {
-    listUserDataFullInfo: jest.fn(),
-    getUserData: jest.fn(),
-    storeUserData: jest.fn(),
-    deleteUserData: jest.fn(),
-    moveUserData: jest.fn()
+    listUserDataFullInfo: vi.fn(),
+    getUserData: vi.fn(),
+    storeUserData: vi.fn(),
+    deleteUserData: vi.fn(),
+    moveUserData: vi.fn()
   }
 }))
 
@@ -33,7 +34,7 @@ describe('useUserFileStore', () => {
         { path: 'file1.txt', modified: 123, size: 100 },
         { path: 'file2.txt', modified: 456, size: 200 }
       ]
-      ;(api.listUserDataFullInfo as jest.Mock).mockResolvedValue(mockFiles)
+      ;(api.listUserDataFullInfo as Mock).mockResolvedValue(mockFiles)
 
       await store.syncFiles('dir')
 
@@ -44,11 +45,11 @@ describe('useUserFileStore', () => {
 
     it('should update existing files', async () => {
       const initialFile = { path: 'file1.txt', modified: 123, size: 100 }
-      ;(api.listUserDataFullInfo as jest.Mock).mockResolvedValue([initialFile])
+      ;(api.listUserDataFullInfo as Mock).mockResolvedValue([initialFile])
       await store.syncFiles('dir')
 
       const updatedFile = { path: 'file1.txt', modified: 456, size: 200 }
-      ;(api.listUserDataFullInfo as jest.Mock).mockResolvedValue([updatedFile])
+      ;(api.listUserDataFullInfo as Mock).mockResolvedValue([updatedFile])
       await store.syncFiles('dir')
 
       expect(store.userFiles).toHaveLength(1)
@@ -61,11 +62,11 @@ describe('useUserFileStore', () => {
         { path: 'file1.txt', modified: 123, size: 100 },
         { path: 'file2.txt', modified: 456, size: 200 }
       ]
-      ;(api.listUserDataFullInfo as jest.Mock).mockResolvedValue(initialFiles)
+      ;(api.listUserDataFullInfo as Mock).mockResolvedValue(initialFiles)
       await store.syncFiles('dir')
 
       const updatedFiles = [{ path: 'file1.txt', modified: 123, size: 100 }]
-      ;(api.listUserDataFullInfo as jest.Mock).mockResolvedValue(updatedFiles)
+      ;(api.listUserDataFullInfo as Mock).mockResolvedValue(updatedFiles)
       await store.syncFiles('dir')
 
       expect(store.userFiles).toHaveLength(1)
@@ -74,7 +75,7 @@ describe('useUserFileStore', () => {
 
     it('should sync root directory when no directory is specified', async () => {
       const mockFiles = [{ path: 'file1.txt', modified: 123, size: 100 }]
-      ;(api.listUserDataFullInfo as jest.Mock).mockResolvedValue(mockFiles)
+      ;(api.listUserDataFullInfo as Mock).mockResolvedValue(mockFiles)
 
       await store.syncFiles()
 
@@ -88,7 +89,7 @@ describe('useUserFileStore', () => {
     describe('load', () => {
       it('should load file content', async () => {
         const file = new UserFile('file1.txt', 123, 100)
-        ;(api.getUserData as jest.Mock).mockResolvedValue({
+        ;(api.getUserData as Mock).mockResolvedValue({
           status: 200,
           text: () => Promise.resolve('file content')
         })
@@ -103,7 +104,7 @@ describe('useUserFileStore', () => {
 
       it('should throw error on failed load', async () => {
         const file = new UserFile('file1.txt', 123, 100)
-        ;(api.getUserData as jest.Mock).mockResolvedValue({
+        ;(api.getUserData as Mock).mockResolvedValue({
           status: 404,
           statusText: 'Not Found'
         })
@@ -119,7 +120,7 @@ describe('useUserFileStore', () => {
         const file = new UserFile('file1.txt', 123, 100)
         file.content = 'modified content'
         file.originalContent = 'original content'
-        ;(api.storeUserData as jest.Mock).mockResolvedValue({
+        ;(api.storeUserData as Mock).mockResolvedValue({
           status: 200,
           json: () => Promise.resolve({ modified: 456, size: 200 })
         })
@@ -149,7 +150,7 @@ describe('useUserFileStore', () => {
     describe('delete', () => {
       it('should delete file', async () => {
         const file = new UserFile('file1.txt', 123, 100)
-        ;(api.deleteUserData as jest.Mock).mockResolvedValue({ status: 204 })
+        ;(api.deleteUserData as Mock).mockResolvedValue({ status: 204 })
 
         await file.delete()
 
@@ -160,7 +161,7 @@ describe('useUserFileStore', () => {
     describe('rename', () => {
       it('should rename file', async () => {
         const file = new UserFile('file1.txt', 123, 100)
-        ;(api.moveUserData as jest.Mock).mockResolvedValue({
+        ;(api.moveUserData as Mock).mockResolvedValue({
           status: 200,
           json: () => Promise.resolve({ modified: 456, size: 200 })
         })
@@ -181,7 +182,7 @@ describe('useUserFileStore', () => {
       it('should save file with new path', async () => {
         const file = new UserFile('file1.txt', 123, 100)
         file.content = 'file content'
-        ;(api.storeUserData as jest.Mock).mockResolvedValue({
+        ;(api.storeUserData as Mock).mockResolvedValue({
           status: 200,
           json: () => Promise.resolve({ modified: 456, size: 200 })
         })
