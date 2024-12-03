@@ -40,3 +40,6 @@ browser_tests/*/*-win32.png
 .env
 
 dist.zip
+
+# bun lock
+bun.lockb
