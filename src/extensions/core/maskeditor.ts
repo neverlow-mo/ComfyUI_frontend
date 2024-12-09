@@ -3846,15 +3846,20 @@ class UIManager {
     const centerY = cursorPoint.y + pan_offset.y
     const brush = this.brush
     const hardness = brushSettings.hardness
-    const extendedSize = brushSettings.size * (2 - hardness) * 2 * zoom_ratio
+    const extendedSize =
+      Math.floor(brushSettings.size * (2 - hardness) * 2 * zoom_ratio) / 2
 
     this.brushSizeSlider.value = String(brushSettings.size)
     this.brushHardnessSlider.value = String(hardness)
 
     brush.style.width = extendedSize + 'px'
     brush.style.height = extendedSize + 'px'
-    brush.style.left = centerX - extendedSize / 2 + 'px'
-    brush.style.top = centerY - extendedSize / 2 + 'px'
+
+    const brushLeft = centerX - extendedSize
+    const brushTop = centerY - extendedSize
+
+    brush.style.left = brushLeft + 'px'
+    brush.style.top = brushTop + 'px'
 
     if (hardness === 1) {
       this.brushPreviewGradient.style.background = 'rgba(255, 0, 0, 0.5)'
